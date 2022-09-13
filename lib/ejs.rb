@@ -38,7 +38,7 @@ module EJS
       replace_escape_tags!(source, options)
       replace_interpolation_tags!(source, options)
       replace_evaluation_tags!(source, options)
-      "function(obj){var __p=[],print=function(){__p.push.apply(__p,arguments);};" +
+      "function(obj){var __p=[],print=function(){__p.push.apply(__p,arguments);},coerceToString=function(s){return (s === null || typeof(s) === 'undefined') ? '' : ('' + s)};" +
         "with(obj||{}){__p.push('#{source}');}return __p.join('');}"
     end
 
@@ -69,7 +69,7 @@ module EJS
 
       def replace_escape_tags!(source, options)
         source.gsub!(options[:escape_pattern] || escape_pattern) do
-          "',(''+#{js_unescape!($1)})#{escape_function},'"
+          "',coerceToString(#{js_unescape!($1)})#{escape_function},'"
         end
       end
 
